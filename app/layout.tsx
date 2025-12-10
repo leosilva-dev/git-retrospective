@@ -11,6 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXTAUTH_URL || "https://git-wrapped.vercel.app"),
   title: "Git Wrapped - Seu Ano em Código",
   description: "Descubra sua atividade no GitHub estilo Spotify Wrapped. Veja seus commits, contribuições e padrões de código do ano.",
   openGraph: {

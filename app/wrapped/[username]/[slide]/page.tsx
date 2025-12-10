@@ -1,88 +1,58 @@
-"use client";
+import { Metadata } from 'next';
 
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
-import { GitHubStats } from "@/types/github";
-import WrappedSlides from "@/components/WrappedSlides";
-import LoadingScreen from "@/components/LoadingScreen";
-
-export default function WrappedUserSlidePage() {
-  const { data: session, status } = useSession();
-  const params = useParams();
-  const username = params.username as string;
-  const slideParam = params.slide as string;
-  const initialSlide = parseInt(slideParam, 10) - 1; // Convert to 0-indexed
-  
-  const [stats, setStats] = useState<GitHubStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (status === "loading") return;
-
-      if (status === "unauthenticated") {
-        window.location.href = "/";
-        return;
-      }
-
-      try {
-        const response = await fetch(`/api/github/stats?username=${encodeURIComponent(username)}`);
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to fetch GitHub data");
-        }
-
-        const data = await response.json();
-        setStats(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch GitHub data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [status, username]);
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  if (error) {
-    return (
-      <main className="min-h-screen bg-[#121212] flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-red-900/20 via-[#121212] to-orange-900/20" />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center max-w-md relative z-10"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", delay: 0.1 }}
-            className="text-8xl mb-6"
-          >
-            😔
-          </motion.div>
-          <h1 className="text-4xl font-black text-white mb-4">Algo deu errado</h1>
-          <p className="text-xl text-gray-300 mb-8">{error}</p>
-          <button
-            onClick={() => (window.location.href = "/")}
-            className="bg-[#1DB954] text-black px-10 py-4 rounded-full font-bold text-lg hover:bg-[#1ED760] hover:scale-105 transition-all shadow-[0_8px_32px_rgba(29,185,84,0.4)]"
-          >
-            Tentar Novamente
-          </button>
-        </motion.div>
-      </main>
-    );
-  }
-
-  if (!stats) return null;
-
-  return <WrappedSlides stats={stats} username={username} initialSlide={initialSlide} />;
+interface Props {
+  params: Promise<{ username: string; slide: string }>;
 }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { username, slide } = await params;
+  const currentYear = new Date().getFullYear();
+  const slideNumber = parseInt(slide, 10);
+
+  // Base URL for the app
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://git-wrapped.vercel.app';
+  
+  // Generate OG image URL
+  const ogImageUrl = `${baseUrl}/api/og/${username}/${slide}`;
+  
+  // Slide-specific titles
+  const slideTitles: Record<number, string> = {
+    1: `${username} fez muitos commits em ${currentYear}!`,
+    2: `A linguagem favorita de ${username}`,
+    3: `O padrão de código de ${username}`,
+    4: `O repositório favorito de ${username}`,
+    5: `${username} escreveu muitas linhas de código!`,
+    6: `O perfil de desenvolvedor de ${username}`,
+    7: `Retrospectiva Git ${currentYear} de ${username}`,
+  };
+
+  const title = slideTitles[slideNumber] || `Git Wrapped ${currentYear} - ${username}`;
+  const description = `Veja a retrospectiva Git de ${username}! Crie a sua também em Git Wrapped.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      type: 'website',
+      siteName: 'Git Wrapped',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImageUrl],
+    },
+  };
+}
+
+export { default } from './page-client';

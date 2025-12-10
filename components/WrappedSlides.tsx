@@ -15,6 +15,7 @@ import {
   SummarySlide,
 } from "@/components/slides";
 import SlideNavigation from "@/components/SlideNavigation";
+import ShareButton from "@/components/ShareButton";
 
 interface Props {
   stats: GitHubStats;
@@ -25,6 +26,19 @@ interface Props {
 export default function WrappedSlides({ stats, username, initialSlide = 0 }: Props) {
   const pathname = usePathname();
   const totalSlides = 8;
+
+  // Slide titles for sharing
+  const currentYear = new Date().getFullYear();
+  const slideTitles = [
+    `Git Wrapped ${currentYear}`,
+    `${stats.totalCommits.toLocaleString("pt-BR")} commits em ${currentYear}!`,
+    `Minha linguagem favorita: ${Object.keys(stats.topLanguages)[0] || "Code"}`,
+    "Meu padrão de código",
+    `Meu repositório favorito: ${stats.topRepos[0]?.name.split("/")[1] || "GitHub"}`,
+    `+${stats.linesAdded.toLocaleString("pt-BR")} linhas de código`,
+    "Meu perfil de desenvolvedor",
+    `Minha Retrospectiva Git ${currentYear}`,
+  ];
 
   // Parse initial slide from URL or prop
   const getInitialSlide = useCallback(() => {
@@ -175,6 +189,13 @@ export default function WrappedSlides({ stats, username, initialSlide = 0 }: Pro
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Share Button - visible on all slides except intro */}
+      {currentSlide > 0 && (
+        <ShareButton 
+          slideTitle={slideTitles[currentSlide]} 
+        />
+      )}
 
       <SlideNavigation
         currentSlide={currentSlide}
