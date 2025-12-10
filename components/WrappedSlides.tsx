@@ -200,7 +200,6 @@ export default function WrappedSlides({ stats, username, initialSlide = 0 }: Pro
       {currentSlide > 0 && (
         <ShareButton 
           slideTitle={slideTitles[currentSlide]} 
-          username={username}
         />
       )}
 

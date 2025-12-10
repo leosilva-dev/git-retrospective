@@ -15,10 +15,21 @@ export async function GET(
     
     const session = await auth();
     const token = session?.accessToken || process.env.GITHUB_TOKEN;
+
+    console.log(`[OG] Generating image for ${username} (slide ${slideNumber})`);
+    console.log(`[OG] Token present: ${!!token}`);
     
     const isOwnProfile = session?.username ? username.toLowerCase() === session.username?.toLowerCase() : false;
     const api = new GitHubAPI(username, token, isOwnProfile);
-    const stats = await api.getStats();
+    
+    let stats;
+    try {
+       stats = await api.getStats();
+    } catch (e) {
+       console.error(`[OG] GitHub API Error:`, e);
+       // Fallback mock stats or error image
+       throw e;
+    }
 
     const currentYear = new Date().getFullYear();
 

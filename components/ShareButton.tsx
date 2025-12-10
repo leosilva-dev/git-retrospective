@@ -5,33 +5,18 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface ShareButtonProps {
   slideTitle?: string;
-  username?: string;
 }
 
-export default function ShareButton({ slideTitle = "Minha Retrospectiva Git", username }: ShareButtonProps) {
+export default function ShareButton({ slideTitle = "Minha Retrospectiva Git" }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const currentYear = new Date().getFullYear();
   
-  // Construct share URL with username query param if needed
+  // Always share the home URL
   const getShareUrl = () => {
     if (typeof window === "undefined") return "";
-    
-    const url = new URL(window.location.href);
-    // If username provided and not in params, add it encoded
-    if (username && !url.searchParams.has("id")) {
-      try {
-        const encoded = btoa(username);
-        url.searchParams.set("id", encoded);
-        // Remove clear text username if present (cleanup)
-        url.searchParams.delete("username");
-        url.searchParams.delete("u");
-      } catch (e) {
-        // Fallback or ignore
-      }
-    }
-    return url.toString();
+    return window.location.origin;
   };
 
   const shareText = `${slideTitle} 🚀\n\nCrie a sua retrospectiva também:`;

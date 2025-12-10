@@ -48,6 +48,11 @@ export default function WrappedUserSlidePage() {
         setError(err instanceof Error ? err.message : "Failed to fetch GitHub data");
       } finally {
         setIsLoading(false);
+        // Clean URL to hide the ID/Username param (cosmetic privacy)
+        if (typeof window !== 'undefined' && window.location.search) {
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, '', newUrl);
+        }
       }
     };
 
