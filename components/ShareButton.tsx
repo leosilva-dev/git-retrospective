@@ -19,9 +19,17 @@ export default function ShareButton({ slideTitle = "Minha Retrospectiva Git", us
     if (typeof window === "undefined") return "";
     
     const url = new URL(window.location.href);
-    // If username provided and not in params, add it
-    if (username && !url.searchParams.has("username") && !url.searchParams.has("u")) {
-      url.searchParams.set("username", username);
+    // If username provided and not in params, add it encoded
+    if (username && !url.searchParams.has("id")) {
+      try {
+        const encoded = btoa(username);
+        url.searchParams.set("id", encoded);
+        // Remove clear text username if present (cleanup)
+        url.searchParams.delete("username");
+        url.searchParams.delete("u");
+      } catch (e) {
+        // Fallback or ignore
+      }
     }
     return url.toString();
   };
@@ -69,26 +77,26 @@ export default function ShareButton({ slideTitle = "Minha Retrospectiva Git", us
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-16 right-0 bg-white/10 backdrop-blur-xl rounded-2xl p-4 min-w-[220px] shadow-2xl border border-white/20"
+            className="absolute bottom-16 right-0 bg-white/10 backdrop-blur-xl rounded-2xl p-6 min-w-[280px] shadow-2xl border border-white/20"
           >
-            <p className="text-white/70 text-sm mb-3 font-medium">Compartilhar</p>
+            <p className="text-white/70 text-sm mb-4 font-medium px-2">Compartilhar</p>
             
             {/* Twitter/X Button */}
             <button
               onClick={shareToTwitter}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-white"
+              className="w-full flex items-center gap-4 px-5 py-4 rounded-xl hover:bg-white/10 transition-colors text-white group"
             >
               <XIcon />
-              <span className="font-medium">Twitter / X</span>
+              <span className="font-medium group-hover:text-[#1DB954] transition-colors">Twitter / X</span>
             </button>
 
             {/* Copy Link Button */}
             <button
               onClick={copyLink}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-white"
+              className="w-full flex items-center gap-4 px-5 py-4 rounded-xl hover:bg-white/10 transition-colors text-white group mt-2"
             >
               <LinkIcon />
-              <span className="font-medium">
+              <span className="font-medium group-hover:text-[#1DB954] transition-colors">
                 {copied ? "Link copiado! ✓" : "Copiar Link"}
               </span>
             </button>

@@ -8,11 +8,20 @@ interface Props {
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slide } = await params;
-  const { username: usernameParam } = await searchParams;
+  const { username: usernameParam, id } = await searchParams;
   
   // Se não tiver username (acesso direto sem compartilhar), título genérico
   // O Client Component vai lidar com o redirecionamento ou carregamento da sessão
-  const username = typeof usernameParam === 'string' ? usernameParam : undefined;
+  let username = typeof usernameParam === 'string' ? usernameParam : undefined;
+
+  // Support for obfuscated username (id param)
+  if (!username && typeof id === 'string') {
+    try {
+      username = atob(id);
+    } catch (e) {
+      // Ignore invalid base64
+    }
+  }
 
   const currentYear = new Date().getFullYear();
   const slideNumber = parseInt(slide, 10);
