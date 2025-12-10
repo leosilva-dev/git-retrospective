@@ -9,11 +9,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const currentYear = new Date().getFullYear();
   const slideNumber = parseInt(slide, 10);
 
-  // Base URL for the app
-  const baseUrl = process.env.NEXTAUTH_URL || 'https://git-wrapped.vercel.app';
-  
-  // Generate OG image URL
-  const ogImageUrl = `${baseUrl}/api/og/${username}/${slide}`;
+  // Use relative URL for OG image - Next.js will resolve using metadataBase from layout
+  const ogImageUrl = `/api/og/${username}/${slide}`;
   
   // Slide-specific titles
   const slideTitles: Record<number, string> = {
@@ -55,4 +52,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export { default } from './page-client';
+import WrappedUserSlidePage from './ClientPage';
+
+export default WrappedUserSlidePage;

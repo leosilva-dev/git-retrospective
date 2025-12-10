@@ -10,8 +10,14 @@ const inter = Inter({
   display: "swap",
 });
 
+const baseUrl = process.env.NEXTAUTH_URL 
+  ? process.env.NEXTAUTH_URL 
+  : process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : "http://localhost:3000";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXTAUTH_URL || "https://git-wrapped.vercel.app"),
+  metadataBase: new URL(baseUrl),
   title: "Git Wrapped - Seu Ano em Código",
   description: "Descubra sua atividade no GitHub estilo Spotify Wrapped. Veja seus commits, contribuições e padrões de código do ano.",
   openGraph: {
