@@ -44,7 +44,7 @@ export default function WrappedSlides({ stats, username, initialSlide = 0 }: Pro
   const getInitialSlide = useCallback(() => {
     if (initialSlide > 0) return initialSlide;
     
-    // Try to get slide from current pathname (handles both /wrapped/1 and /wrapped/user/1)
+    // Try to get slide from current pathname (handles handles /wrapped/N)
     const match = pathname?.match(/\/(\d+)$/);
     if (match) {
       const slideNum = parseInt(match[1], 10) - 1; // Convert to 0-indexed
@@ -60,10 +60,16 @@ export default function WrappedSlides({ stats, username, initialSlide = 0 }: Pro
   // Update URL without navigation (shallow routing)
   const updateUrl = useCallback((slideIndex: number) => {
     const slideNumber = slideIndex + 1; // Convert to 1-indexed for URL
-    const basePath = username ? `/wrapped/${username}` : '/wrapped';
-    const newUrl = `${basePath}/${slideNumber}`;
+    let newUrl = `/wrapped/${slideNumber}`;
+    
+    // Preserve query params if they exist (important for sharing context)
+    if (typeof window !== 'undefined') {
+       const search = window.location.search;
+       if (search) newUrl += search;
+    }
+    
     window.history.pushState(null, "", newUrl);
-  }, [username]);
+  }, []);
 
   const nextSlide = useCallback(() => {
     if (currentSlide < totalSlides - 1) {
@@ -194,6 +200,7 @@ export default function WrappedSlides({ stats, username, initialSlide = 0 }: Pro
       {currentSlide > 0 && (
         <ShareButton 
           slideTitle={slideTitles[currentSlide]} 
+          username={username}
         />
       )}
 

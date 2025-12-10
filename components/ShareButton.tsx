@@ -5,17 +5,31 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface ShareButtonProps {
   slideTitle?: string;
+  username?: string;
 }
 
-export default function ShareButton({ slideTitle = "Minha Retrospectiva Git" }: ShareButtonProps) {
+export default function ShareButton({ slideTitle = "Minha Retrospectiva Git", username }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const currentYear = new Date().getFullYear();
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  
+  // Construct share URL with username query param if needed
+  const getShareUrl = () => {
+    if (typeof window === "undefined") return "";
+    
+    const url = new URL(window.location.href);
+    // If username provided and not in params, add it
+    if (username && !url.searchParams.has("username") && !url.searchParams.has("u")) {
+      url.searchParams.set("username", username);
+    }
+    return url.toString();
+  };
+
   const shareText = `${slideTitle} 🚀\n\nCrie a sua retrospectiva também:`;
 
   const shareToTwitter = () => {
+    const shareUrl = getShareUrl();
     const twitterUrl = new URL("https://twitter.com/intent/tweet");
     twitterUrl.searchParams.set("text", shareText);
     twitterUrl.searchParams.set("url", shareUrl);
@@ -26,7 +40,7 @@ export default function ShareButton({ slideTitle = "Minha Retrospectiva Git" }: 
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(getShareUrl());
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {

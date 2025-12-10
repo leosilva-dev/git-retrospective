@@ -8,10 +8,16 @@ import { GitHubStats } from "@/types/github";
 import WrappedSlides from "@/components/WrappedSlides";
 import LoadingScreen from "@/components/LoadingScreen";
 
-export default function WrappedUserPage() {
+export default function WrappedUserSlidePage() {
   const { data: session, status } = useSession();
   const params = useParams();
-  const username = params.username as string;
+  
+  const slideParam = params.slide as string;
+  const initialSlide = parseInt(slideParam, 10) - 1; // Convert to 0-indexed
+  
+  // For the actual page content, we ONLY show the logged-in user's data (privacy)
+  // The username query param (if present) is ignored here and only used by page.tsx request for OG Meta
+  const username = session?.username;
   
   const [stats, setStats] = useState<GitHubStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,9 +27,11 @@ export default function WrappedUserPage() {
     const fetchData = async () => {
       if (status === "loading") return;
 
-      if (status === "unauthenticated") {
-        window.location.href = "/";
-        return;
+      // If not logged in, redirect to home (landing page)
+      // This serves as the "viral loop": click link -> go to home to make your own
+      if (!username) {
+         window.location.href = "/";
+         return;
       }
 
       try {
@@ -82,5 +90,5 @@ export default function WrappedUserPage() {
 
   if (!stats) return null;
 
-  return <WrappedSlides stats={stats} username={username} />;
+  return <WrappedSlides stats={stats} username={username || undefined} initialSlide={initialSlide} />;
 }

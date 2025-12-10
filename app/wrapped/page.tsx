@@ -1,25 +1,26 @@
 "use client";
 
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import LoadingScreen from "@/components/LoadingScreen";
 
-export default function WrappedPage() {
-  const { data: session, status } = useSession();
+function WrappedContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (status === "loading") return;
-
-    if (status === "unauthenticated") {
-      window.location.href = "/";
-      return;
-    }
-
-    // Redirect to username-based route
-    if (session?.username) {
-      window.location.href = `/wrapped/${session.username}`;
-    }
-  }, [status, session]);
+    const params = searchParams.toString();
+    const query = params ? `?${params}` : '';
+    router.replace(`/wrapped/1${query}`);
+  }, [router, searchParams]);
 
   return <LoadingScreen />;
+}
+
+export default function WrappedPage() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <WrappedContent />
+    </Suspense>
+  );
 }
