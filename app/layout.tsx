@@ -10,11 +10,16 @@ const inter = Inter({
   display: "swap",
 });
 
-const baseUrl = process.env.NEXTAUTH_URL 
-  ? process.env.NEXTAUTH_URL 
-  : process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : "http://localhost:3000";
+// Use production URL for Open Graph images to avoid Vercel preview URLs
+const baseUrl = process.env.NEXTAUTH_URL
+  ? process.env.NEXTAUTH_URL
+  : process.env.NEXT_PUBLIC_SITE_URL
+    ? process.env.NEXT_PUBLIC_SITE_URL
+    : process.env.VERCEL_ENV === 'production' && process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
