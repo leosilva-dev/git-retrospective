@@ -48,10 +48,11 @@ function BackgroundBlobs() {
 
 function ContentSection({ onSignIn }: { onSignIn: () => void }) {
   return (
-    <div className="text-center max-w-5xl mx-auto relative z-10 w-full">
+    <div className="text- flex flex-col items-center z-10 max-w-4xl w-full">
       <TitleSection />
       <DescriptionSection />
       <ButtonSection onSignIn={onSignIn} />
+      <CreatorLink />
     </div>
   );
 }
@@ -62,11 +63,11 @@ function TitleSection() {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="pt-12 sm:pt-16 md:pt-20"
+      className="pt-8 sm:pt-10 md:pt-12"
       style={{ marginBottom: "1.5rem" }}
     >
       <motion.h1
-        className="text-7xl sm:text-8xl md:text-9xl lg:text-[11rem] font-black text-white mb-6 sm:mb-8 leading-[0.85] tracking-tighter"
+        className="text-7xl sm:text-8xl md:text-9xl lg:text-[11rem] font-black text-white mb-6 sm:mb-8 leading-[0.85] tracking-tighter text-center"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2, duration: 0.7 }}
@@ -125,7 +126,7 @@ function ButtonSection({ onSignIn }: { onSignIn: () => void }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6, duration: 0.6 }}
       className="mb-20 sm:mb-24 md:mb-28"
-      style={{ paddingTop: "1.5rem" }}
+      style={{ paddingTop: "1.5rem", marginBottom: "6rem" }}
     >
       <motion.button
         type="button"
@@ -144,3 +145,31 @@ function ButtonSection({ onSignIn }: { onSignIn: () => void }) {
     </motion.div>
   );
 }
+
+
+
+
+function CreatorLink() {
+  return (
+    <motion.button
+        type="button"
+        onClick={() => window.open("https://x.com/leonaardo__s", "_blank")}        
+        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200  cursor-pointer"
+        style={{
+          padding:'0.5rem',
+          borderRadius:'5px'
+        }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+        <span>
+          Built by @leonaardo__s
+        </span>
+      </motion.button>
+      
+      
+  );
+}
+
