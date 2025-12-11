@@ -23,13 +23,20 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Git Wrapped - Seu Ano em Código",
     description: "Descubra sua atividade no GitHub estilo Spotify Wrapped",
-    images: ["/static-preview.png"],
+    images: [
+      {
+        url: `${baseUrl}/static-preview.png`,
+        width: 972,
+        height: 545,
+        alt: "Git Wrapped - Seu Ano em Código",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Git Wrapped - Seu Ano em Código",
     description: "Descubra sua atividade no GitHub estilo Spotify Wrapped",
-    images: ["/static-preview.png"],
+    images: [`${baseUrl}/static-preview.png`],
   },
 };
 

@@ -27,9 +27,9 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const slideNumber = parseInt(slide, 10);
 
   // Use relative URL for OG image if username exists
-  const ogImageUrl = username 
-    ? `/api/og/${username}/${slide}` 
-    : '/og-image.png'; // Fallback image if no username in URL
+  const ogImageUrl = username
+    ? `/api/og/${username}/${slide}`
+    : '/static-preview.png'; // Fallback image if no username in URL
   
   // Slide-specific titles
   const slideTitles: Record<number, string> = {
